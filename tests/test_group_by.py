@@ -1,5 +1,7 @@
 from parser import FLAG, TosecFile
 
+import pytest
+
 from grouper import get_group_by
 
 
@@ -219,13 +221,65 @@ def test_dir_limit():
                 flags=[],
             ),
         ],
-        "WM-WZ": [
+        "WN-WZ": [
             TosecFile(
                 filename="world Series Baseball (1985)(Imagine)[a].z80",
                 title="world Series Baseball",
                 year="1985",
                 publisher="Imagine",
                 extension="z80",
+                flags=[],
+            ),
+        ],
+    }
+
+
+@pytest.mark.skip
+def test_limit_with_numbers():
+    group_by_first_letter = get_group_by()
+
+    assert group_by_first_letter(
+        [
+            TosecFile(
+                filename="1K Othello (2008)(YRS)(en).tap",
+                title="1K Othello",
+                year="2008",
+                publisher="YRS",
+                extension="tap",
+                language="en",
+                flags=[],
+            ),
+            TosecFile(
+                filename="!K Othello (2008)(YRS)(en).tap",
+                title="!K Othello",
+                year="2008",
+                publisher="YRS",
+                extension="tap",
+                language="en",
+                flags=[],
+            ),
+        ],
+        1,
+    ) == {
+        "##-#M": [
+            TosecFile(
+                filename="1K Othello (2008)(YRS)(en).tap",
+                title="1K Othello",
+                year="2008",
+                publisher="YRS",
+                extension="tap",
+                language="en",
+                flags=[],
+            )
+        ],
+        "#N-#Z": [
+            TosecFile(
+                filename="!K Othello (2008)(YRS)(en).tap",
+                title="!K Othello",
+                year="2008",
+                publisher="YRS",
+                extension="tap",
+                language="en",
                 flags=[],
             ),
         ],
