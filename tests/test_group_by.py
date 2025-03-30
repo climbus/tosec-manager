@@ -2,8 +2,8 @@ from parser import FLAG
 
 import pytest
 
-from fixtures import create_tosec_file
 from grouper import get_group_by
+from tests.fixtures import create_tosec_file
 
 
 def test_group_by_first_letter_empty_list():

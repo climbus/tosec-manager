@@ -1,7 +1,7 @@
 from parser import FLAG
 
 from filters import get_bestchoice_filter
-from fixtures import create_tosec_file
+from tests.fixtures import create_tosec_file
 
 
 def test_return_empty_list():

@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from filecopier import copy_files
-from fixtures import create_tosec_file
+from tests.fixtures import create_tosec_file
 
 
 @pytest.fixture
