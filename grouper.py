@@ -29,7 +29,7 @@ def _prepare_dirs(
     lst: Sequence[TosecFile], dir_limit: Optional[int]
 ) -> Dict[str, List[TosecFile]]:
     result: Dict[str, List[TosecFile]] = {}
-    lst_sorted = sorted(lst, key=lambda x: x.title)
+    lst_sorted = sorted(lst, key=lambda x: x.title.upper())
 
     for dirname, elms in groupby(lst_sorted, lambda x: x.title[0].upper()):
         group_len = len(list(elms))

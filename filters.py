@@ -27,7 +27,7 @@ def get_bestchoice_filter(
     def bestchoice(lst: Sequence[TosecFile]) -> Sequence[TosecFile]:
         result: Sequence[TosecFile] = []
 
-        lst_sorted = sorted(lst, key=lambda x: (x.title, x.publisher))
+        lst_sorted = sorted(lst, key=lambda x: (x.title.upper(), x.publisher.upper()))
 
         for _, group in groupby(lst_sorted, lambda x: (x.title, x.publisher)):
             result.append(_choose_best_file(list(group), formats, languages))
