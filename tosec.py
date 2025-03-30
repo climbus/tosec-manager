@@ -1,6 +1,7 @@
 import shutil
 from parser import Parser
 from pathlib import Path
+from typing import Optional
 
 import click
 
@@ -9,9 +10,10 @@ from grouper import get_group_by
 
 
 @click.command()
+@click.option("--limit", type=click.INT)
 @click.option("--copy-to", type=click.Path(exists=True))
 @click.argument("path", type=click.Path(exists=True))
-def main(path: str, copy_to: str):
+def main(path: str, copy_to: str, limit: Optional[int] = None):
     grouper = get_group_by()
     bestchoice = get_bestchoice_filter(
         formats=["tzx", "tap", "z80"], languages=["pl", "en"]
@@ -20,7 +22,7 @@ def main(path: str, copy_to: str):
 
     files = [parser.parse(p.name) for p in Path(path).iterdir()]
 
-    grouped_files = grouper(bestchoice(files))
+    grouped_files = grouper(bestchoice(files), limit)
 
     for dirname, group in grouped_files.items():
         print(f"{dirname} ({len(group)})")
