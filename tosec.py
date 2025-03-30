@@ -11,6 +11,7 @@ from grouper import get_group_by
 
 
 @click.command()
+@click.option("--filter-only", type=click.BOOL)
 @click.option("--limit", type=click.INT, help="Maximum number of files per directory.")
 @click.option(
     "--copy-to",
@@ -22,7 +23,9 @@ from grouper import get_group_by
     type=click.Path(exists=True),
     #    help="Path to the directory containing TOSEC files to be processed.",
 )
-def main(path: str, copy_to: str, limit: Optional[int] = None):
+def main(
+    path: str, copy_to: str, limit: Optional[int] = None, filter_only: bool = False
+):
     grouper = get_group_by()
     bestchoice = get_bestchoice_filter(
         formats=["tzx", "tap", "z80"], languages=["pl", "en"]
@@ -31,7 +34,12 @@ def main(path: str, copy_to: str, limit: Optional[int] = None):
 
     files = [parser.parse(p.name) for p in Path(path).iterdir()]
 
-    grouped_files = grouper(bestchoice(files), limit)
+    filtered = bestchoice(files)
+    if filter_only:
+        for game in filtered:
+            print(f"{game.title} {game.year} {game.publisher} {game.extension}")
+        return
+    grouped_files = grouper(filtered, limit)
 
     for dirname, group in grouped_files.items():
         print(f"{dirname} ({len(group)})")
