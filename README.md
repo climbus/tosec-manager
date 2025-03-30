@@ -2,6 +2,10 @@
 
 TOSEC Manager is a powerful command-line interface (CLI) tool designed to efficiently catalog and organize your collection of TOSEC (The Old School Emulation Center) files. Implemented in Python, this tool not only parses TOSEC file naming conventions to extract valuable metadata—such as title, year, publisher, and language—but also organizes these files into structured directories. This organization facilitates easy access and use with emulators, ensuring that your digital collection is both manageable and ready for use.
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ## Installation
 1. **Clone the Repository**: Download the repository to your local machine.
    ```bash
