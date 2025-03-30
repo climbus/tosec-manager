@@ -32,7 +32,6 @@ def _prepare_dirs(
     lst_sorted = sorted(lst, key=lambda x: x.title)
 
     for dirname, elms in groupby(lst_sorted, lambda x: x.title[0].upper()):
-        print(dirname)
         group_len = len(list(elms))
 
         if not _has_to_limit(dir_limit, group_len):
@@ -63,12 +62,9 @@ def place_item_in_dir(
     item: TosecFile, dirs: Dict[str, List[TosecFile]]
 ) -> Dict[str, List[TosecFile]]:
     first_char = item.title[0].upper()
-    print(dirs.keys())
     for dir_name in dirs.keys():
-        print(dir_name, first_char)
         if "-" in dir_name:
             start, end = [name[1] for name in dir_name.split("-")]
-            print(start, end, dir_name)
             if (
                 len(item.title) > 1
                 and item.title[0].upper() == dir_name[0]
@@ -90,7 +86,6 @@ def get_group_by() -> GroupBy:
     ) -> Dict[str, List[TosecFile]]:
 
         dirs = _prepare_dirs(lst, dir_limit)
-        print(dirs)
 
         for item in lst:
             place_item_in_dir(item, dirs)
