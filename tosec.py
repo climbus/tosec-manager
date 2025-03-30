@@ -5,14 +5,23 @@ from typing import Optional
 
 import click
 
+from filecopier import copy_files
 from filters import get_bestchoice_filter
 from grouper import get_group_by
 
 
 @click.command()
-@click.option("--limit", type=click.INT)
-@click.option("--copy-to", type=click.Path(exists=True))
-@click.argument("path", type=click.Path(exists=True))
+@click.option("--limit", type=click.INT, help="Maximum number of files per directory.")
+@click.option(
+    "--copy-to",
+    type=click.Path(exists=True),
+    help="Directory path where organized files will be copied.",
+)
+@click.argument(
+    "path",
+    type=click.Path(exists=True),
+    #    help="Path to the directory containing TOSEC files to be processed.",
+)
 def main(path: str, copy_to: str, limit: Optional[int] = None):
     grouper = get_group_by()
     bestchoice = get_bestchoice_filter(
@@ -29,13 +38,7 @@ def main(path: str, copy_to: str, limit: Optional[int] = None):
         for game in group:
             print(f"    {game.title} {game.year} {game.publisher} {game.extension}")
 
-    if copy_to:
-        for dirname, group in grouped_files.items():
-            dest = Path(copy_to) / dirname
-            dest.mkdir(exist_ok=True)
-            for game in group:
-                print(f"Copying {game.filename} to {dest}")
-                shutil.copy(Path(path) / game.filename, dest / game.filename)
+    copy_files(grouped_files, path, copy_to)
 
 
 if __name__ == "__main__":
