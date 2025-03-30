@@ -84,6 +84,12 @@ class Parser:
         if filename.strip():
             raise ParserError(f"Could not parse parts: {filename}")
 
+        if not year:
+            raise ParserError("Year is missing in the filename.")
+
+        if not publisher:
+            raise ParserError("Publisher is missing in the filename.")
+
         return TosecFile(
             filename=original_filename,
             title=title,

@@ -1,4 +1,6 @@
-from parser import FLAG, Parser, TosecFile
+from parser import FLAG, Parser, ParserError, TosecFile
+
+import pytest
 
 
 def test_parse_single_simple_element():
@@ -212,4 +214,42 @@ def test_parse_with_parentesis_in_hack():
         system="48K-128K",
         flags=[FLAG.HACK],
         hack="Ely (Msi)",
+    )
+
+
+def test_parse_missing_year():
+    parser = Parser()
+
+    filename = "Game Without Year ()(Publisher).tap"
+    with pytest.raises(ParserError):
+        parser.parse(filename)
+
+
+def test_parse_missing_publisher():
+    parser = Parser()
+
+    filename = "Game Without Publisher (1989)().tap"
+    with pytest.raises(ParserError):
+        parser.parse(filename)
+
+
+def test_parse_invalid_format():
+    parser = Parser()
+
+    filename = "Invalid Format Game 1989 Publisher.tap"
+    with pytest.raises(ParserError):
+        parser.parse(filename)
+
+
+def test_parse_unexpected_characters():
+    parser = Parser()
+
+    filename = "Unexpected!Characters (1989)(Publisher).tap"
+    assert parser.parse(filename) == TosecFile(
+        filename=filename,
+        title="Unexpected!Characters",
+        year="1989",
+        publisher="Publisher",
+        extension="tap",
+        flags=[],
     )
