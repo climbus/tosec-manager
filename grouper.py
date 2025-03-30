@@ -8,10 +8,16 @@ def _is_number_or_special(char: str) -> bool:
     return char.isdigit() or not char.isalnum()
 
 
-def _create_dir_name(dirname: str, start: int, end: int) -> str:
+def _create_dir_name(
+    dirname: str, start: int, end: int, include_special: bool = False
+) -> str:
     """Create a directory name based on the start and end indices."""
     if _is_number_or_special(dirname):
         return "#"
+
+    if include_special:
+        return f"{dirname}#-{dirname}{string.ascii_uppercase[end]}"
+
     return f"{dirname}{string.ascii_uppercase[start]}-{dirname}{string.ascii_uppercase[end]}"
 
 
@@ -46,7 +52,7 @@ def _prepare_dirs(
 
         for i in range(parts):
             start, end = _compute_bounds(i, letters_in_dir)
-            dir_name = _create_dir_name(dirname, start, end)
+            dir_name = _create_dir_name(dirname, start, end, i == 0)
             result.setdefault(dir_name, [])
 
     return result
@@ -69,6 +75,14 @@ def place_item_in_dir(
                 len(item.title) > 1
                 and item.title[0].upper() == dir_name[0]
                 and start <= item.title[1].upper() <= end
+            ):
+                dirs[dir_name].append(item)
+                break
+            if (
+                start == "#"
+                and item.title[0].upper() == dir_name[0]
+                and len(item.title) > 1
+                and _is_number_or_special(item.title[1])
             ):
                 dirs[dir_name].append(item)
                 break

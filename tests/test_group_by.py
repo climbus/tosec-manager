@@ -86,7 +86,7 @@ def test_dir_limit():
         "A": [
             create_tosec_file(title="Airewolves of London"),
         ],
-        "WA-WM": [
+        "W#-WM": [
             create_tosec_file(title="Werewolves of London"),
         ],
         "WN-WZ": [
@@ -109,5 +109,38 @@ def test_limit_with_numbers():
         "##-#M": [create_tosec_file(title="1K Othello", language="en")],
         "#N-#Z": [
             create_tosec_file(title="!K Othello", language="en"),
+        ],
+    }
+
+
+def test_limit_with_special_characters():
+    group_by_first_letter = get_group_by()
+
+    assert group_by_first_letter(
+        [
+            create_tosec_file(title="!A Othello", language="en"),
+            create_tosec_file(title="1A Othello", language="en"),
+            create_tosec_file(title="A Othello", language="en"),
+            create_tosec_file(title="AR Othello", language="en"),
+            create_tosec_file(title="C1 Othello", language="en"),
+            create_tosec_file(title="CO Othello", language="en"),
+        ],
+        1,
+    ) == {
+        "#": [
+            create_tosec_file(title="!A Othello", language="en"),
+            create_tosec_file(title="1A Othello", language="en"),
+        ],
+        "A#-AM": [
+            create_tosec_file(title="A Othello", language="en"),
+        ],
+        "AN-AZ": [
+            create_tosec_file(title="AR Othello", language="en"),
+        ],
+        "C#-CM": [
+            create_tosec_file(title="C1 Othello", language="en"),
+        ],
+        "CN-CZ": [
+            create_tosec_file(title="CO Othello", language="en"),
         ],
     }
