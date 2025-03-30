@@ -1,6 +1,7 @@
-from parser import FLAG, TosecFile
+from parser import FLAG
 
 from filters import get_bestchoice_filter
+from fixtures import create_tosec_file
 
 
 def test_return_empty_list():
@@ -10,38 +11,15 @@ def test_return_empty_list():
 
 def test_choose_single_element():
     bestchoice = get_bestchoice_filter()
-    files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        )
-    ]
+    files = [create_tosec_file("Werewolves of London")]
     assert bestchoice(files) == files
 
 
 def test_choose_prefrered_format():
     bestchoice = get_bestchoice_filter(formats=["tap", "z80"])
     files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="z80",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).z80",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        ),
+        create_tosec_file("Werewolves of London", extension="z80"),
+        create_tosec_file("Werewolves of London", extension="tap"),
     ]
     assert bestchoice(files) == [files[1]]
 
@@ -50,22 +28,8 @@ def test_choose_prefrered_format_with_no_match():
     bestchoice = get_bestchoice_filter(formats=["tap", "z80"])
 
     files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tzx",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tzx",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).z80",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="z80",
-            flags=[],
-        ),
+        create_tosec_file("Werewolves of London", extension="tzx"),
+        create_tosec_file("Werewolves of London", extension="z80"),
     ]
 
     assert bestchoice(files) == [files[1]]
@@ -75,88 +39,36 @@ def test_choose_one_file_for_every_game_title():
     bestchoice = get_bestchoice_filter(formats=["tap", "z80"])
 
     files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).z80",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="z80",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Another Game (1989)(Mastertronic).tap",
-            title="Another Game",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        ),
+        create_tosec_file("Werewolves of London", extension="z80"),
+        create_tosec_file("Another Game", extension="tap"),
+        create_tosec_file("Werewolves of London", extension="tap"),
     ]
 
-    assert bestchoice(files) == [files[0], files[2]]
+    assert files[1] in bestchoice(files)
+    assert files[2] in bestchoice(files)
+    assert files[0] not in bestchoice(files)
 
 
 def test_choose_one_file_for_every_game_title_and_publisher():
     bestchoice = get_bestchoice_filter(formats=["tap", "z80"])
 
     files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
+        create_tosec_file("Werewolves of London", extension="tap"),
+        create_tosec_file(
+            "Werewolves of London", publisher="Whatever", extension="z80"
         ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).z80",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Whatever",
-            extension="z80",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Another Game (1989)(Mastertronic).tap",
-            title="Another Game",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        ),
+        create_tosec_file("Another Game", extension="tap"),
     ]
 
-    assert bestchoice(files) == [files[0], files[1], files[2]]
+    assert bestchoice(files) == [files[2], files[0], files[1]]
 
 
 def test_prefer_games_without_flags():
     bestchoice = get_bestchoice_filter(formats=["tap", "z80"])
 
     files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[FLAG.ALTERNATE_VERSION],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic)[a].tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        ),
+        create_tosec_file("Werewolves of London", flags=[FLAG.ALTERNATE_VERSION]),
+        create_tosec_file("Werewolves of London"),
     ]
 
     assert bestchoice(files) == [files[1]]
@@ -168,41 +80,10 @@ def test_prefered_language():
     )
 
     files = [
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic)(pl).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            language="es",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic)(en).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            language="pl",
-            flags=[],
-        ),
-        TosecFile(
-            filename="Werewolves of London (1989)(Mastertronic)(en).tap",
-            title="Werewolves of London",
-            year="1989",
-            publisher="Mastertronic",
-            extension="tap",
-            language="en",
-            flags=[],
-        ),
+        create_tosec_file("Werewolves of London", language="es"),
+        create_tosec_file("Werewolves of London"),
+        create_tosec_file("Werewolves of London", language="pl"),
+        create_tosec_file("Werewolves of London", language="en"),
     ]
 
     assert bestchoice(files) == [files[2]]

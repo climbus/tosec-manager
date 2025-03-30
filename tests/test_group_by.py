@@ -1,7 +1,8 @@
-from parser import FLAG, TosecFile
+from parser import FLAG
 
 import pytest
 
+from fixtures import create_tosec_file
 from grouper import get_group_by
 
 
@@ -16,81 +17,25 @@ def test_group_by_first_letter():
 
     assert group_by_first_letter(
         [
-            TosecFile(
-                filename="Werewolves of London (1989)(Mastertronic).tap",
-                title="Werewolves of London",
-                year="1989",
-                publisher="Mastertronic",
-                extension="tap",
-                flags=[],
+            create_tosec_file(title="Werewolves of London"),
+            create_tosec_file(
+                title="World Series Baseball", flags=[FLAG.ALTERNATE_VERSION]
             ),
-            TosecFile(
-                filename="World Series Baseball (1985)(Imagine)[a].z80",
-                title="World Series Baseball",
-                year="1985",
-                publisher="Imagine",
-                extension="z80",
-                flags=[FLAG.ALTERNATE_VERSION],
-            ),
-            TosecFile(
-                filename="Othello (2008)(YRS)(en).tap",
-                title="Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
-            TosecFile(
-                filename="'Rthello (2008)(YRS)(NL).tap",
-                title="Rthello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                country="NL",
-                flags=[],
-            ),
+            create_tosec_file(title="Othello", language="en"),
+            create_tosec_file(title="Rthello", country="NL"),
         ]
     ) == {
         "W": [
-            TosecFile(
-                filename="Werewolves of London (1989)(Mastertronic).tap",
-                title="Werewolves of London",
-                year="1989",
-                publisher="Mastertronic",
-                extension="tap",
-                flags=[],
-            ),
-            TosecFile(
-                filename="World Series Baseball (1985)(Imagine)[a].z80",
-                title="World Series Baseball",
-                year="1985",
-                publisher="Imagine",
-                extension="z80",
-                flags=[FLAG.ALTERNATE_VERSION],
+            create_tosec_file(title="Werewolves of London"),
+            create_tosec_file(
+                title="World Series Baseball", flags=[FLAG.ALTERNATE_VERSION]
             ),
         ],
         "O": [
-            TosecFile(
-                filename="Othello (2008)(YRS)(en).tap",
-                title="Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
+            create_tosec_file(title="Othello", language="en"),
         ],
         "R": [
-            TosecFile(
-                filename="'Rthello (2008)(YRS)(NL).tap",
-                title="Rthello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                country="NL",
-                flags=[],
-            ),
+            create_tosec_file(title="Rthello", country="NL"),
         ],
     }
 
@@ -100,45 +45,13 @@ def test_group_by_first_letter_as_number_and_special_char():
 
     assert group_by_first_letter(
         [
-            TosecFile(
-                filename="1K Othello (2008)(YRS)(en).tap",
-                title="1K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
-            TosecFile(
-                filename="!K Othello (2008)(YRS)(en).tap",
-                title="!K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
+            create_tosec_file(title="1K Othello", language="en"),
+            create_tosec_file(title="!K Othello", language="en"),
         ]
     ) == {
         "#": [
-            TosecFile(
-                filename="1K Othello (2008)(YRS)(en).tap",
-                title="1K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
-            TosecFile(
-                filename="!K Othello (2008)(YRS)(en).tap",
-                title="!K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
+            create_tosec_file(title="1K Othello", language="en"),
+            create_tosec_file(title="!K Othello", language="en"),
         ],
     }
 
@@ -148,41 +61,13 @@ def test_dir_uppercase():
 
     assert group_by_first_letter(
         [
-            TosecFile(
-                filename="Werewolves of London (1989)(Mastertronic).tap",
-                title="Werewolves of London",
-                year="1989",
-                publisher="Mastertronic",
-                extension="tap",
-                flags=[],
-            ),
-            TosecFile(
-                filename="world Series Baseball (1985)(Imagine)[a].z80",
-                title="world Series Baseball",
-                year="1985",
-                publisher="Imagine",
-                extension="z80",
-                flags=[],
-            ),
+            create_tosec_file(title="Werewolves of London"),
+            create_tosec_file(title="world Series Baseball"),
         ]
     ) == {
         "W": [
-            TosecFile(
-                filename="Werewolves of London (1989)(Mastertronic).tap",
-                title="Werewolves of London",
-                year="1989",
-                publisher="Mastertronic",
-                extension="tap",
-                flags=[],
-            ),
-            TosecFile(
-                filename="world Series Baseball (1985)(Imagine)[a].z80",
-                title="world Series Baseball",
-                year="1985",
-                publisher="Imagine",
-                extension="z80",
-                flags=[],
-            ),
+            create_tosec_file(title="Werewolves of London"),
+            create_tosec_file(title="world Series Baseball"),
         ],
     }
 
@@ -192,44 +77,20 @@ def test_dir_limit():
 
     assert group_by_first_letter(
         [
-            TosecFile(
-                filename="Werewolves of London (1989)(Mastertronic).tap",
-                title="Werewolves of London",
-                year="1989",
-                publisher="Mastertronic",
-                extension="tap",
-                flags=[],
-            ),
-            TosecFile(
-                filename="world Series Baseball (1985)(Imagine)[a].z80",
-                title="world Series Baseball",
-                year="1985",
-                publisher="Imagine",
-                extension="z80",
-                flags=[],
-            ),
+            create_tosec_file(title="Werewolves of London"),
+            create_tosec_file(title="Airewolves of London"),
+            create_tosec_file(title="world Series Baseball"),
         ],
         1,
     ) == {
+        "A": [
+            create_tosec_file(title="Airewolves of London"),
+        ],
         "WA-WM": [
-            TosecFile(
-                filename="Werewolves of London (1989)(Mastertronic).tap",
-                title="Werewolves of London",
-                year="1989",
-                publisher="Mastertronic",
-                extension="tap",
-                flags=[],
-            ),
+            create_tosec_file(title="Werewolves of London"),
         ],
         "WN-WZ": [
-            TosecFile(
-                filename="world Series Baseball (1985)(Imagine)[a].z80",
-                title="world Series Baseball",
-                year="1985",
-                publisher="Imagine",
-                extension="z80",
-                flags=[],
-            ),
+            create_tosec_file(title="world Series Baseball"),
         ],
     }
 
@@ -240,47 +101,13 @@ def test_limit_with_numbers():
 
     assert group_by_first_letter(
         [
-            TosecFile(
-                filename="1K Othello (2008)(YRS)(en).tap",
-                title="1K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
-            TosecFile(
-                filename="!K Othello (2008)(YRS)(en).tap",
-                title="!K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
+            create_tosec_file(title="1K Othello", language="en"),
+            create_tosec_file(title="!K Othello", language="en"),
         ],
         1,
     ) == {
-        "##-#M": [
-            TosecFile(
-                filename="1K Othello (2008)(YRS)(en).tap",
-                title="1K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            )
-        ],
+        "##-#M": [create_tosec_file(title="1K Othello", language="en")],
         "#N-#Z": [
-            TosecFile(
-                filename="!K Othello (2008)(YRS)(en).tap",
-                title="!K Othello",
-                year="2008",
-                publisher="YRS",
-                extension="tap",
-                language="en",
-                flags=[],
-            ),
+            create_tosec_file(title="!K Othello", language="en"),
         ],
     }
