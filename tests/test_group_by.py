@@ -40,6 +40,49 @@ def test_group_by_first_letter():
     }
 
 
+def test_dir_limit_not_divisible():
+    group_by_first_letter = get_group_by()
+
+    assert group_by_first_letter(
+        [
+            create_tosec_file(title="Werewolves of London"),
+            create_tosec_file(title="Airewolves of London"),
+            create_tosec_file(title="world Series Baseball"),
+            create_tosec_file(title="world Series Baseball 2"),
+            create_tosec_file(title="world Series Baseball 3"),
+            create_tosec_file(title="Xanadu"),
+        ],
+        3,
+    ) == {
+        "A": [
+            create_tosec_file(title="Airewolves of London"),
+        ],
+        "W#-WM": [
+            create_tosec_file(title="Werewolves of London"),
+        ],
+        "WN-WZ": [
+            create_tosec_file(title="world Series Baseball"),
+            create_tosec_file(title="world Series Baseball 2"),
+            create_tosec_file(title="world Series Baseball 3"),
+        ],
+        "X": [
+            create_tosec_file(title="Xanadu"),
+        ],
+    }
+
+
+def test_dir_limit_exceeds_alphabet():
+    group_by_first_letter = get_group_by()
+
+    files = [create_tosec_file(title=f"A{chr(65+i)} Title") for i in range(30)]
+
+    result = group_by_first_letter(
+        files,
+        1,
+    )
+    assert len(list(result.keys())) == 26
+
+
 def test_group_by_first_letter_as_number_and_special_char():
     group_by_first_letter = get_group_by()
 
@@ -142,5 +185,32 @@ def test_limit_with_special_characters():
         ],
         "CN-CZ": [
             create_tosec_file(title="CO Othello", language="en"),
+        ],
+    }
+
+
+def test_limit_similar_counts():
+    group_by_first_letter = get_group_by()
+
+    assert group_by_first_letter(
+        [
+            create_tosec_file(title="AAA"),
+            create_tosec_file(title="AAB"),
+            create_tosec_file(title="AAC"),
+            create_tosec_file(title="ABA"),
+            create_tosec_file(title="AOA"),
+            create_tosec_file(title="ASA"),
+        ],
+        3,
+    ) == {
+        "A#-AA": [
+            create_tosec_file(title="AAA"),
+            create_tosec_file(title="AAB"),
+            create_tosec_file(title="AAC"),
+        ],
+        "AB-AZ": [
+            create_tosec_file(title="ABA"),
+            create_tosec_file(title="AOA"),
+            create_tosec_file(title="ASA"),
         ],
     }
