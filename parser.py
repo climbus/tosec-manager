@@ -41,6 +41,14 @@ class TosecFile:
     media: str = ""
     demo: str = ""
 
+    @property
+    def first_letter(self) -> str:
+        return self.title[0].upper()
+
+    @property
+    def second_letter(self) -> str:
+        return self.title[1].upper()
+
 
 class ParserError(Exception):
     pass
